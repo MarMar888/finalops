@@ -6,6 +6,15 @@ from .infeasibility import RequirementViolation, InfeasibilityDiagnosis, explain
 from .cbc_diagnostics import CbcDiagnostics, solve_with_diagnostics
 from .report import build_report, diagnose
 from .run import RunResult, run
+from .sensitivity import (
+    RequirementSensitivity,
+    SensitivityReport,
+    ImpactResult,
+    SolveDiff,
+    binding_report,
+    requirement_impact,
+    solve_diff,
+)
 
 __all__ = [
     "Ledger",
@@ -29,4 +38,11 @@ __all__ = [
     "diagnose",
     "RunResult",
     "run",
+    "RequirementSensitivity",
+    "SensitivityReport",
+    "ImpactResult",
+    "SolveDiff",
+    "binding_report",
+    "requirement_impact",
+    "solve_diff",
 ]
