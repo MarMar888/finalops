@@ -56,14 +56,26 @@ def relaxation_bound(model, solver: pulp.LpSolver | None = None) -> float | None
     return pulp.value(relaxed.objective)
 
 
-def quality_gap(model, incumbent_objective: float | None, solver: pulp.LpSolver | None = None) -> float | None:
-    """Relative gap between the current candidate objective and the LP-relaxation
-    bound. This is the signal agents currently lack mid-task: without it, 'runs
-    and is feasible' looks indistinguishable from 'is actually good'.
+def quality_gap(
+    model,
+    incumbent_objective: float | None,
+    bound: float | None = None,
+    solver: pulp.LpSolver | None = None,
+) -> float | None:
+    """Relative gap between the current candidate objective and a bound. This is
+    the signal agents currently lack mid-task: without it, 'runs and is
+    feasible' looks indistinguishable from 'is actually good'.
+
+    Pass `bound` explicitly when a real solver-reported bound is available
+    (e.g. from `cbc_diagnostics.solve_with_diagnostics`) — it's tighter and
+    more honest than the fallback. Without one, this falls back to computing
+    an LP-relaxation bound, which is exact for pure LPs but can be loose for
+    MIPs with a large integrality gap.
     """
     if incumbent_objective is None:
         return None
-    bound = relaxation_bound(model, solver=solver)
+    if bound is None:
+        bound = relaxation_bound(model, solver=solver)
     if bound is None or bound == 0:
         return None
     return abs(incumbent_objective - bound) / abs(bound)

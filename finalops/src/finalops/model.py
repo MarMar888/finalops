@@ -21,6 +21,7 @@ class Model:
         self.name = name
         self.ledger = ledger
         self.problem = pulp.LpProblem(name, sense)
+        self.requirement_by_constraint: dict[str, str] = {}
 
     def _require(self, requirement_id: str) -> None:
         if requirement_id not in self.ledger:
@@ -36,9 +37,12 @@ class Model:
         name: str | None = None,
     ) -> pulp.LpConstraint:
         self._require(requirement_id)
-        if name:
-            constraint.name = name
+        # Assign the name ourselves (rather than letting PuLP auto-generate one on
+        # `+=`) so we reliably know the key to look up later when explaining an
+        # infeasibility back to the ledger requirement that produced it.
+        constraint.name = name or f"c{len(self.problem.constraints) + 1}"
         self.problem += constraint
+        self.requirement_by_constraint[constraint.name] = requirement_id
         self.ledger.mark_linked(requirement_id)
         return constraint
 
