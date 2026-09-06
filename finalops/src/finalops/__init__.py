@@ -4,6 +4,15 @@ from .solve import SolveResult, solve
 from .validate import ConstraintViolation, FeasibilityReport, check_feasibility, quality_gap
 from .report import build_report, diagnose
 from .run import RunResult, run
+from .sensitivity import (
+    RequirementSensitivity,
+    SensitivityReport,
+    ImpactResult,
+    SolveDiff,
+    binding_report,
+    requirement_impact,
+    solve_diff,
+)
 
 __all__ = [
     "Ledger",
@@ -22,4 +31,11 @@ __all__ = [
     "diagnose",
     "RunResult",
     "run",
+    "RequirementSensitivity",
+    "SensitivityReport",
+    "ImpactResult",
+    "SolveDiff",
+    "binding_report",
+    "requirement_impact",
+    "solve_diff",
 ]
