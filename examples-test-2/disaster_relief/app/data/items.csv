@@ -1,0 +1,4 @@
+item_id,unit_volume,load_factor,preposition_cost,emergency_procure_cost,shortage_penalty,cold_chain_required,max_stock_per_warehouse
+water,0.03,1.0,8.5,17.0,145.0,0,4200
+meal,0.022,0.75,6.8,13.5,110.0,0,4300
+medical,0.085,2.2,42.0,88.0,520.0,1,850

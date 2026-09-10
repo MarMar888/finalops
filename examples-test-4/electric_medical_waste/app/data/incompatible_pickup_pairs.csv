@@ -1,0 +1,11 @@
+clinic_a,clinic_b,reason
+H01,H37,isolation pickup cannot share an onboard segment with this oncology clinic
+H06,H39,two isolation generators require separate sealed tote segments
+H07,H42,two high-risk isolation generators require separate sealed tote segments
+H10,H38,oncology and high red-bag generator separation
+H13,H43,immunocompromised clinic separation
+H18,H41,oncology separation after cytotoxic bags
+H19,H37,dense ward and isolation unit separation
+H25,H42,high-risk pickup pair cannot be co-loaded
+H31,H39,isolation pickup pair cannot be co-loaded
+H34,H43,oncology and high red-bag generator separation

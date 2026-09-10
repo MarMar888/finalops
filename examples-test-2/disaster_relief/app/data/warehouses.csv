@@ -1,0 +1,10 @@
+warehouse_id,region,open_cost,storage_capacity,outbound_capacity,cold_chain,seismic_reinforced,staff_team
+W_NORTH,north,62000,520,2300,1,1,alpha
+W_WEST,west,54000,440,1800,0,1,bravo
+W_CENTRAL,central,76000,640,2700,1,1,alpha
+W_PORT,coastal,68000,590,2500,1,0,charlie
+W_AIRBASE,central,82000,480,2850,1,1,delta
+W_EAST,east,50000,390,1650,0,0,bravo
+W_SOUTH,south,58000,430,1850,0,1,charlie
+W_HIGHLAND,mountain,61000,360,1450,1,1,delta
+W_RESERVE,east,45000,315,1250,0,0,reserve

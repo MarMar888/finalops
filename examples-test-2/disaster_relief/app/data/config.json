@@ -1,0 +1,11 @@
+{
+  "fairness_gap": 0.16,
+  "late_response_penalty_per_load_hour": 1.15,
+  "max_open_warehouses": 7,
+  "min_open_cold_chain_warehouses": 2,
+  "objective_sense": "minimize_total_risk_adjusted_cost",
+  "planning_budget": 820000,
+  "quantity_tolerance": 1e-05,
+  "tail_risk_alpha": 0.8,
+  "tail_risk_weight": 0.35
+}

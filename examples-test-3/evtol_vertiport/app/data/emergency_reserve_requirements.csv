@@ -1,0 +1,5 @@
+scenario_id,vertiport_id,slot,min_idle_aircraft,min_soc_kwh,reason
+S_CLEAR,V_HOSPITAL,12,1,40,medical-campus reserve after morning inbound wave
+S_WIND_NORTH,V_HOSPITAL,12,1,40,medical-campus reserve during north-wind slowdown
+S_STORM_CELLS,V_HOSPITAL,12,1,40,medical-campus reserve during storm response
+S_STORM_CELLS,V_AIRPORT,18,1,50,airport recovery reserve before evening wave

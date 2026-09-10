@@ -1,0 +1,8 @@
+aircraft_id,route_id,aircraft_type,transit_hours,weight_capacity_kg,volume_capacity_cbm,cost_per_kg,carbon_kg_per_kg,cold_chain_capable,hazmat_allowed,widebody,max_cold_chain_orders,carbon_allowance_kg
+A01,R_NRT,narrowbody,9.4,2100,15.2,0.92,0.74,1,0,0,5,760
+A02,R_NRT,widebody,8.8,3150,22.8,0.81,0.69,1,1,1,8,1580
+A03,R_FRA,widebody,10.7,3300,24.5,0.86,0.72,1,1,1,9,1760
+A04,R_FRA,narrowbody,11.6,1900,14.2,0.97,0.78,0,0,0,0,950
+A05,R_LAX,widebody,12.8,3500,25.7,0.89,0.75,1,1,1,7,1720
+A06,R_LAX,narrowbody,13.5,2100,15.0,1.02,0.80,0,1,0,0,1200
+A07,R_DXB,widebody,7.9,3650,26.4,0.78,0.66,1,0,1,6,1580

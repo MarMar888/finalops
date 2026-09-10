@@ -1,0 +1,11 @@
+facility_id,waste_type,accepted,treatment_cost_per_kg
+F1,red,1,1.15
+F1,yellow,1,0.77
+F2,red,1,1.18
+F2,yellow,1,0.80
+F3,red,1,1.12
+F3,yellow,1,0.74
+F4,red,0,1.15
+F4,yellow,1,0.77
+F5,red,1,1.18
+F5,yellow,1,0.80

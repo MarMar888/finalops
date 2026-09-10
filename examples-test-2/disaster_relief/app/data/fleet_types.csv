@@ -1,0 +1,5 @@
+fleet_type,capacity_load,cold_chain_capable,rough_road_capable,airlift_capable,fixed_trip_cost,max_travel_time_hours
+general_truck,260,0,0,0,180,9.5
+cold_chain_truck,155,1,0,0,310,8.5
+light_utility,90,0,1,0,145,12.0
+airlift,70,1,1,1,850,6.0

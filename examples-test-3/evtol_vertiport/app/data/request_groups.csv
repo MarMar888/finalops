@@ -1,0 +1,11 @@
+group_id,request_id,max_departure_spread_slots,group_rule
+G_EAST_AIRPORT,R005,2,all_or_none_same_wave
+G_EAST_AIRPORT,R006,2,all_or_none_same_wave
+G_AIRPORT_HOSPITAL,R021,6,all_or_none_same_wave
+G_AIRPORT_HOSPITAL,R022,6,all_or_none_same_wave
+G_DOWNTOWN_HOSPITAL,R023,4,all_or_none_same_wave
+G_DOWNTOWN_HOSPITAL,R024,4,all_or_none_same_wave
+G_HOSPITAL_WEST,R025,4,all_or_none_same_wave
+G_HOSPITAL_WEST,R026,4,all_or_none_same_wave
+G_EVENING_AIRPORT_OUT,R045,2,all_or_none_same_wave
+G_EVENING_AIRPORT_OUT,R046,2,all_or_none_same_wave
