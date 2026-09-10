@@ -6,6 +6,7 @@ from .infeasibility import RequirementViolation, InfeasibilityDiagnosis, explain
 from .cbc_diagnostics import CbcDiagnostics, solve_with_diagnostics
 from .report import build_report, diagnose
 from .run import RunResult, run
+from .graph import to_dot
 from .sensitivity import (
     RequirementSensitivity,
     SensitivityReport,
@@ -38,6 +39,7 @@ __all__ = [
     "diagnose",
     "RunResult",
     "run",
+    "to_dot",
     "RequirementSensitivity",
     "SensitivityReport",
     "ImpactResult",

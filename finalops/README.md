@@ -79,6 +79,15 @@ finalops ledger list ledger.json
 
 A requirement can be linked to more than one constraint (`linked_constraints` is a list); an unlinked one shows no `->` lines at all.
 
+`finalops ledger graph` renders the same information as a Graphviz DOT graph instead of text — one node per requirement (shaped/colored by kind: decision variables as boxes, the objective as a diamond, constraints as ellipses, data as notes), with an edge from each decision variable to every objective/constraint whose linked expression actually references it. Unlinked requirements are dashed red, so a gap is visible in the picture, not just in `list` output:
+
+```bash
+finalops ledger graph ledger.json --out model.dot
+dot -Tpng model.dot -o model.png   # if you have Graphviz installed
+```
+
+Omit `--out` to print the DOT source to stdout instead.
+
 ## Why this shape
 
 Real failure analysis of LLM agents on end-to-end OR tasks (ORAgentBench, 2026) found that ~55% of failures are modeling-side — missed operational rules and brittle formulations — not solver weakness, and that feasibility rates are consistently much higher than pass rates: agents stop at "it runs and satisfies constraints" without checking whether it's close to optimal. `finalops` targets exactly those two gaps rather than competing with existing solver-modeling libraries.

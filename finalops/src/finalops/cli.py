@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from .graph import to_dot
 from .ledger import Ledger, RequirementKind
 from .report import diagnose
 
@@ -36,6 +37,16 @@ def _cmd_ledger_list(args: argparse.Namespace) -> None:
         print(f"[{flag}] {req.id} ({req.kind.value}): {req.description}  <- {req.source}{units}")
         for lc in req.linked_constraints:
             print(f"           -> {lc.name}: {lc.expression}")
+
+
+def _cmd_ledger_graph(args: argparse.Namespace) -> None:
+    ledger = Ledger.from_json(args.path)
+    dot = to_dot(ledger)
+    if args.out:
+        Path(args.out).write_text(dot + "\n")
+        print(f"wrote {args.out}")
+    else:
+        print(dot)
 
 
 def _cmd_check(args: argparse.Namespace) -> None:
@@ -75,6 +86,14 @@ def main(argv: list[str] | None = None) -> None:
     p_list = ledger_sub.add_parser("list", help="show requirements and their link status")
     p_list.add_argument("path")
     p_list.set_defaults(func=_cmd_ledger_list)
+
+    p_graph = ledger_sub.add_parser(
+        "graph",
+        help="render the ledger as a Graphviz DOT graph (decision variables -> objective/constraints that reference them)",
+    )
+    p_graph.add_argument("path")
+    p_graph.add_argument("--out", default=None, help="write DOT to this file instead of stdout")
+    p_graph.set_defaults(func=_cmd_ledger_graph)
 
     p_check = sub.add_parser(
         "check",
