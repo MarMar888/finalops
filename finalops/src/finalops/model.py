@@ -43,13 +43,13 @@ class Model:
         constraint.name = name or f"c{len(self.problem.constraints) + 1}"
         self.problem += constraint
         self.requirement_by_constraint[constraint.name] = requirement_id
-        self.ledger.mark_linked(requirement_id)
+        self.ledger.mark_linked(requirement_id, constraint_name=constraint.name, expression=str(constraint))
         return constraint
 
     def set_objective(self, expr: pulp.LpAffineExpression, requirement_id: str) -> None:
         self._require(requirement_id)
         self.problem += expr
-        self.ledger.mark_linked(requirement_id)
+        self.ledger.mark_linked(requirement_id, constraint_name="objective", expression=str(expr))
 
     def solve(self, solver: pulp.LpSolver | None = None):
         from .solve import solve as _solve

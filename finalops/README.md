@@ -49,6 +49,15 @@ finalops ledger add ledger.json --id demand --description "meet demand for every
 finalops ledger list ledger.json
 ```
 
+`ledger list` shows, per requirement, which constraint(s) (or the objective) fulfilled it and their actual expression at link time — not just a linked/unlinked flag:
+
+```
+[linked  ] demand (constraint): meet demand for every product  <- brief.md:3
+           -> c1: widgets + gadgets >= 100
+```
+
+A requirement can be linked to more than one constraint (`linked_constraints` is a list); an unlinked one shows no `->` lines at all.
+
 ## Why this shape
 
 Real failure analysis of LLM agents on end-to-end OR tasks (ORAgentBench, 2026) found that ~55% of failures are modeling-side — missed operational rules and brittle formulations — not solver weakness, and that feasibility rates are consistently much higher than pass rates: agents stop at "it runs and satisfies constraints" without checking whether it's close to optimal. `finalops` targets exactly those two gaps rather than competing with existing solver-modeling libraries.

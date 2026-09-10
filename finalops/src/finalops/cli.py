@@ -33,6 +33,8 @@ def _cmd_ledger_list(args: argparse.Namespace) -> None:
     for req in ledger:
         flag = "linked  " if req.linked else "UNLINKED"
         print(f"[{flag}] {req.id} ({req.kind.value}): {req.description}  <- {req.source}")
+        for lc in req.linked_constraints:
+            print(f"           -> {lc.name}: {lc.expression}")
 
 
 def _cmd_check(args: argparse.Namespace) -> None:
