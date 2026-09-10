@@ -6,8 +6,35 @@ import sys
 from pathlib import Path
 
 from .graph import to_dot
-from .ledger import Ledger, RequirementKind
+from .ledger import DuplicateRequirementError, Ledger, RequirementKind
 from .report import diagnose
+
+
+def _load_ledger(path: str) -> Ledger:
+    p = Path(path)
+    if not p.exists():
+        print(f"error: no ledger at '{path}' -- run `finalops ledger init {path}` first", file=sys.stderr)
+        sys.exit(1)
+    try:
+        return Ledger.from_json(p)
+    except json.JSONDecodeError as exc:
+        print(f"error: '{path}' is not valid JSON ({exc})", file=sys.stderr)
+        sys.exit(1)
+    except (KeyError, ValueError) as exc:
+        print(f"error: '{path}' doesn't look like a finalops ledger ({exc})", file=sys.stderr)
+        sys.exit(1)
+
+
+def _load_report(path: str) -> dict:
+    p = Path(path)
+    if not p.exists():
+        print(f"error: no report at '{path}' -- run finalops.run(model, out='{path}') first", file=sys.stderr)
+        sys.exit(1)
+    try:
+        return json.loads(p.read_text())
+    except json.JSONDecodeError as exc:
+        print(f"error: '{path}' is not valid JSON ({exc})", file=sys.stderr)
+        sys.exit(1)
 
 
 def _cmd_ledger_init(args: argparse.Namespace) -> None:
@@ -20,14 +47,18 @@ def _cmd_ledger_init(args: argparse.Namespace) -> None:
 
 def _cmd_ledger_add(args: argparse.Namespace) -> None:
     path = Path(args.path)
-    ledger = Ledger.from_json(path) if path.exists() else Ledger()
-    ledger.add(id=args.id, description=args.description, source=args.source, kind=args.kind, units=args.units)
+    ledger = _load_ledger(args.path) if path.exists() else Ledger()
+    try:
+        ledger.add(id=args.id, description=args.description, source=args.source, kind=args.kind, units=args.units)
+    except DuplicateRequirementError:
+        print(f"error: requirement '{args.id}' already exists in '{path}' -- pick a different --id", file=sys.stderr)
+        sys.exit(1)
     ledger.to_json(path)
     print(f"added requirement '{args.id}' to {path}")
 
 
 def _cmd_ledger_list(args: argparse.Namespace) -> None:
-    ledger = Ledger.from_json(args.path)
+    ledger = _load_ledger(args.path)
     if len(ledger) == 0:
         print("(empty ledger)")
         return
@@ -40,7 +71,7 @@ def _cmd_ledger_list(args: argparse.Namespace) -> None:
 
 
 def _cmd_ledger_graph(args: argparse.Namespace) -> None:
-    ledger = Ledger.from_json(args.path)
+    ledger = _load_ledger(args.path)
     dot = to_dot(ledger)
     if args.out:
         Path(args.out).write_text(dot + "\n")
@@ -50,7 +81,7 @@ def _cmd_ledger_graph(args: argparse.Namespace) -> None:
 
 
 def _cmd_check(args: argparse.Namespace) -> None:
-    report = json.loads(Path(args.report).read_text())
+    report = _load_report(args.report)
     problems = diagnose(report, max_gap=args.max_gap)
 
     if problems:
