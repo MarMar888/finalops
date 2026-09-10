@@ -2,10 +2,16 @@
 
 AI-native scaffolding for operations-research agents, built on top of [PuLP](https://github.com/coin-or/pulp) rather than instead of it.
 
-The premise: agents (LLMs) are already fluent in PuLP/OR-Tools/Pyomo syntax. What they're bad at is (1) not silently dropping operational rules buried in a brief, and (2) knowing whether a feasible solution is actually any good. `finalops` doesn't add modeling power — it adds two cheap, falsifiable checks around the modeling step:
+The premise: agents (LLMs) are already fluent in PuLP/OR-Tools/Pyomo syntax. What they're bad at is (1) not silently dropping operational rules buried in a brief, and (2) knowing whether a feasible solution is actually any good. `finalops` doesn't add modeling power — it adds cheap, falsifiable checks around the modeling step, on top of plain PuLP.
 
-1. **A requirement ledger.** Every rule pulled from the brief gets registered — id, description, and where it came from — *before* any model code is written. Constraints wired into the model must cite a ledger id, so a rule that never makes it into the formulation shows up as an `UNLINKED` entry instead of disappearing silently.
-2. **A live feasibility + quality-gap oracle.** After solving, `check_feasibility` recomputes every constraint against the current solution (structured violations, not "trust the code"), and `quality_gap` compares the objective against an LP-relaxation bound so "it ran and is feasible" and "it's actually good" stop being indistinguishable.
+## Highlights
+
+- **A requirement ledger with four categories** — decision variables, objective, constraints, data — matching how a brief actually gets decomposed into a model. Every rule gets registered with an id, description, and source *before* any model code is written; wiring a variable/constraint/objective/data citation into the model requires citing a ledger id, so a rule that never makes it in shows up as `UNLINKED` instead of disappearing silently. See [The four requirement categories](#the-four-requirement-categories).
+- **Full traceability, not just a flag.** Each linked requirement records exactly which constraint (or variable, or data citation) fulfilled it and its expression at link time — `finalops ledger list` and `finalops ledger graph` show the real linkage, not a bare boolean.
+- **`run()`: one call, real diagnostics.** Solves, checks feasibility, checks ledger coverage, and checks the quality gap in a single call — against the solver's own internally-computed bound (recovered from the CBC log), not a looser LP-relaxation guess. See [Quickstart](#quickstart).
+- **Infeasibility explanation, not just the word "infeasible."** When a model is infeasible, `explain_infeasibility` relaxes every constraint, resolves, and reports which ledger requirements are responsible and by how much — a deletion-free stand-in for an IIS, which the open-source solvers behind PuLP don't provide. See [Explaining an infeasibility](#explaining-an-infeasibility).
+- **Sensitivity & what-if analysis.** `binding_report` gives shadow prices per requirement (exact for LPs, tagged with basis for MIPs); `requirement_impact` re-solves after dropping or shifting one requirement's constraint and reports what changed. See [Sensitivity & what-if analysis](#sensitivity--what-if-analysis).
+- **A CLI for the whole loop** — `finalops ledger init/add/list/graph` and `finalops check` — so a non-Python agent, a human reviewer, or CI can drive the same ledger and gate on the same report.json a Python script produces.
 
 ## Quickstart
 
@@ -61,6 +67,55 @@ decomposed into a model:
 ```
 
 See `examples/production_plan.py` for a full walkthrough using all four.
+
+## Explaining an infeasibility
+
+Open-source solvers exposed through PuLP (CBC, HiGHS) don't ship an IIS (irreducible infeasible subsystem) the way some commercial solvers do — when a model is infeasible, you normally just get the word "infeasible" and nothing else. `explain_infeasibility` relaxes every constraint with a penalized slack/surplus, re-solves to minimize total violation, and reports which ledger requirements are responsible and by how much:
+
+```python
+import pulp
+from finalops import Ledger, Model, explain_infeasibility
+
+ledger = Ledger()
+ledger.add(id="floor", description="produce at least 100 units per week", source="brief:1")
+ledger.add(id="ceiling", description="produce at most 40 units per week", source="brief:2")
+ledger.add(id="cost", description="minimize cost", source="brief:3", kind="objective")
+
+model = Model("conflict", ledger)
+x = pulp.LpVariable("x", lowBound=0)
+model.set_objective(x, requirement_id="cost")
+model.add_constraint(x >= 100, requirement_id="floor")
+model.add_constraint(x <= 40, requirement_id="ceiling")
+model.solve()
+
+diagnosis = explain_infeasibility(model)
+for v in diagnosis.violations:
+    print(v.requirement_id, v.description, v.magnitude)
+# floor  produce at least 100 units per week  60.0
+```
+
+`run()` calls this automatically whenever the solver proves infeasibility, so `outcome.problems` already reads a line like `"infeasible: requirement 'floor' violated by 60"` instead of a bare feasibility flag.
+
+## Sensitivity & what-if analysis
+
+Continuing the `production_plan` model from [Quickstart](#quickstart) (feasible, so there's something to analyze): `binding_report` reports, per requirement, whether its constraint is binding, its slack, and its shadow price — exact for continuous LPs, computed against the LP relaxation (and tagged as such) for MIPs, so an approximate dual is never presented as an exact one:
+
+```python
+from finalops import binding_report
+
+report = binding_report(model)
+for r in report.requirements:
+    print(r.requirement_id, "binding=", r.binding, "shadow_price=", r.shadow_price)
+```
+
+`requirement_impact` answers "what if" without hand-editing the model: drop a requirement's constraint entirely, or shift its RHS, re-solve, and see what changed — correct for MIPs too, since it's a real re-solve rather than analytic ranging:
+
+```python
+from finalops import requirement_impact
+
+impact = requirement_impact(model, "capacity", rhs_delta=20)
+print(impact.objective_delta, impact.binding_flips)
+```
 
 ## Managing the ledger from the CLI
 
