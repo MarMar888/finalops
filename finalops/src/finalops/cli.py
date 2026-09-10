@@ -20,7 +20,7 @@ def _cmd_ledger_init(args: argparse.Namespace) -> None:
 def _cmd_ledger_add(args: argparse.Namespace) -> None:
     path = Path(args.path)
     ledger = Ledger.from_json(path) if path.exists() else Ledger()
-    ledger.add(id=args.id, description=args.description, source=args.source, kind=args.kind)
+    ledger.add(id=args.id, description=args.description, source=args.source, kind=args.kind, units=args.units)
     ledger.to_json(path)
     print(f"added requirement '{args.id}' to {path}")
 
@@ -32,7 +32,8 @@ def _cmd_ledger_list(args: argparse.Namespace) -> None:
         return
     for req in ledger:
         flag = "linked  " if req.linked else "UNLINKED"
-        print(f"[{flag}] {req.id} ({req.kind.value}): {req.description}  <- {req.source}")
+        units = f" [units: {req.units}]" if req.units else ""
+        print(f"[{flag}] {req.id} ({req.kind.value}): {req.description}  <- {req.source}{units}")
         for lc in req.linked_constraints:
             print(f"           -> {lc.name}: {lc.expression}")
 
@@ -68,6 +69,7 @@ def main(argv: list[str] | None = None) -> None:
     p_add.add_argument("--description", required=True)
     p_add.add_argument("--source", required=True, help="where this rule came from, e.g. 'instructions.md:12'")
     p_add.add_argument("--kind", default="constraint", choices=[k.value for k in RequirementKind])
+    p_add.add_argument("--units", default=None, help="e.g. 'hours/week' -- most relevant for decision_variable/data")
     p_add.set_defaults(func=_cmd_ledger_add)
 
     p_list = ledger_sub.add_parser("list", help="show requirements and their link status")

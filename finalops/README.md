@@ -41,6 +41,27 @@ finalops check report.json --max-gap 0.05
 
 `check` reads the `report.json` that `run()` already wrote and exits non-zero with the same diagnostics if anything's wrong.
 
+## The four requirement categories
+
+Every ledger requirement has a `kind`, matching the order a brief actually gets
+decomposed into a model:
+
+1. **`decision_variable`** — what can be chosen. Register it with `ledger.add(..., kind="decision_variable", units="hours/week")`, then link it to the real PuLP variable with `model.add_variable(var, requirement_id=..., units=...)`. Units are stored explicitly — PuLP variables have none of their own, and a dropped or mismatched unit is exactly the kind of silent error the ledger exists to catch.
+2. **`objective`** — what "good" means. Linked via `model.set_objective(...)`.
+3. **`constraint`** — what's not allowed, logical (e.g. can't produce a negative quantity) or specific to the brief. Linked via `model.add_constraint(...)`.
+4. **`data`** — the hard numbers everything above is built from (a bound, a cost coefficient). Data has no PuLP object to attach to, so it's linked with an explicit citation: `model.cite_data(requirement_id, note="3.0 $/unit, from data/costs.csv")`.
+
+`finalops ledger list` shows the units and the linked object for each:
+
+```
+[linked  ] widgets_qty (decision_variable): widgets to produce per week  <- brief:1 [units: units/week]
+           -> widgets: Continuous variable, bounds=[0, +inf], units=units/week
+[linked  ] widget_cost (data): cost per widget  <- brief:2 [units: dollars/unit]
+           -> data: 3.0 dollars/unit, from brief:2
+```
+
+See `examples/production_plan.py` for a full walkthrough using all four.
+
 ## Managing the ledger from the CLI
 
 ```bash

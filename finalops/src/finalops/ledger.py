@@ -7,9 +7,17 @@ from pathlib import Path
 
 
 class RequirementKind(str, Enum):
-    CONSTRAINT = "constraint"
+    """The four things a brief has to be decomposed into before any solver code
+    gets written, in the order a modeler would normally work through them:
+    what can be chosen (DECISION_VARIABLE), what "good" means
+    (OBJECTIVE), what's not allowed (CONSTRAINT), and what hard numbers
+    everything above is built from (DATA).
+    """
+
+    DECISION_VARIABLE = "decision_variable"
     OBJECTIVE = "objective"
-    RESOURCE = "resource"
+    CONSTRAINT = "constraint"
+    DATA = "data"
 
 
 @dataclass
@@ -29,6 +37,7 @@ class Requirement:
     description: str
     source: str
     kind: RequirementKind = RequirementKind.CONSTRAINT
+    units: str | None = None
     linked_constraints: list[LinkedConstraint] = field(default_factory=list)
 
     @property
@@ -60,10 +69,11 @@ class Ledger:
         description: str,
         source: str,
         kind: RequirementKind | str = RequirementKind.CONSTRAINT,
+        units: str | None = None,
     ) -> Requirement:
         if id in self._by_id:
             raise DuplicateRequirementError(f"requirement '{id}' already exists")
-        req = Requirement(id=id, description=description, source=source, kind=RequirementKind(kind))
+        req = Requirement(id=id, description=description, source=source, kind=RequirementKind(kind), units=units)
         self._by_id[id] = req
         return req
 
@@ -109,6 +119,7 @@ class Ledger:
                 description=d["description"],
                 source=d["source"],
                 kind=RequirementKind(d.get("kind", "constraint")),
+                units=d.get("units"),
                 linked_constraints=[
                     LinkedConstraint(name=lc["name"], expression=lc["expression"])
                     for lc in d.get("linked_constraints", [])
