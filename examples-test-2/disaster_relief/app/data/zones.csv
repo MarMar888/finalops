@@ -1,0 +1,15 @@
+zone_id,district,x,y,priority_class,population,water_floor,meal_floor,medical_floor,emergency_procure_limit_fraction,target_response_hours
+Z01_HARBOR,harbor,12,14,critical,8200,0.91,0.86,0.94,0.45,7
+Z02_RIDGE,ridge,20,82,remote,6100,0.84,0.8,0.88,0.22,10
+Z03_DOWNTOWN,metro,45,43,critical,12800,0.92,0.88,0.95,0.5,6
+Z04_EASTSIDE,east,78,38,standard,9600,0.77,0.72,0.78,0.4,8
+Z05_ISLAND,island,5,7,remote,4300,0.83,0.8,0.86,0.18,12
+Z06_VALLEY,valley,63,72,standard,7200,0.76,0.71,0.76,0.38,9
+Z07_CHILDREN,metro,38,49,critical,6800,0.9,0.86,0.96,0.48,6
+Z08_UPLAND,mountain,34,91,remote,5000,0.84,0.81,0.88,0.2,11
+Z09_SOUTHGATE,south,54,11,standard,7600,0.76,0.7,0.75,0.42,8
+Z10_WESTPARK,west,18,38,standard,6900,0.77,0.72,0.76,0.4,8
+Z11_CLINICBELT,east,88,60,critical,7900,0.9,0.85,0.94,0.46,7
+Z12_FARMS,rural,92,22,standard,5200,0.75,0.7,0.74,0.35,10
+Z13_CANYON,mountain,70,95,remote,3900,0.82,0.79,0.86,0.18,12
+Z14_AIRSTRIP,central,50,58,standard,5800,0.78,0.73,0.79,0.5,7

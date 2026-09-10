@@ -1,0 +1,4 @@
+period_id,start_hour,end_hour,label,delay_penalty_multiplier
+P1,0,24,first_24_hours,2.2
+P2,24,48,second_24_hours,1.25
+P3,48,72,third_24_hours,0.55

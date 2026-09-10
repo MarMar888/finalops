@@ -1,0 +1,4 @@
+scenario_id,corridor_id,start_slot,end_slot,max_flights_per_slot,reason
+S_WIND_NORTH,C_NORTH,2,24,2,north corridor ATC metering during wind event
+S_STORM_CELLS,C_NORTH,2,24,2,storm-cell spacing on hospital-west corridor
+S_STORM_CELLS,C_EASTWEST,18,30,1,convective-cell spacing on east-west corridor

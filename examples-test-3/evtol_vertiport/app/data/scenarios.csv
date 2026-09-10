@@ -1,0 +1,4 @@
+scenario_id,probability,description,global_delay_slots,charger_derate,soc_derate,target_profit
+S_CLEAR,0.5,clear high-demand commute wave,0,1.0,1.0,3800
+S_WIND_NORTH,0.3,north wind slows hospital and downtown corridors,1,0.92,0.96,3150
+S_STORM_CELLS,0.2,convective cells close selected corridors and reduce grid headroom,1,0.82,0.93,2500

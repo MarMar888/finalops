@@ -1,0 +1,16 @@
+facility_id,window_id,start_min,end_min,max_unloads,max_kg
+F1,early,430,720,3,567.5
+F1,midday,720,960,3,622.0
+F1,late,960,1290,3,539.5
+F2,early,430,720,3,539.0
+F2,midday,720,960,3,593.5
+F2,late,960,1290,3,511.0
+F3,early,430,720,3,581.5
+F3,midday,720,960,3,636.0
+F3,late,960,1290,3,553.5
+F4,early,430,720,3,473.0
+F4,midday,720,960,3,527.5
+F4,late,960,1290,3,445.0
+F5,early,430,720,3,523.5
+F5,midday,720,960,3,578.0
+F5,late,960,1290,3,495.5

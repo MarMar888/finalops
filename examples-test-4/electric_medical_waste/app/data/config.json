@@ -1,0 +1,15 @@
+{
+  "curfew_end_min": 555,
+  "curfew_start_min": 465,
+  "depot_node": "D0",
+  "load_energy_kwh_per_kg_km": 0.00042,
+  "loaded_wait_risk_multiplier": 0.65,
+  "max_open_facilities": 5,
+  "minimum_facility_throughput_kg": 150.0,
+  "objective_units": "planning cost index",
+  "red_risk_factor": 1.38,
+  "risk_cost_per_unit": 0.018,
+  "service_time_buffer_min": 0.0,
+  "travel_cost_per_km": 2.85,
+  "yellow_risk_factor": 0.72
+}

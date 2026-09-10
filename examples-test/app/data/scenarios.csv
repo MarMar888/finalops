@@ -1,0 +1,13 @@
+scenario_id,probability,condition
+SC01,0.070,baseline_late_bookings
+SC02,0.075,express_surge
+SC03,0.080,pharma_surge
+SC04,0.085,ecommerce_soft
+SC05,0.075,industrial_heavy
+SC06,0.090,weather_payload_restriction
+SC07,0.085,perishables_surge
+SC08,0.080,widebody_bag_heavy
+SC09,0.085,balanced_high
+SC10,0.080,asia_peak
+SC11,0.095,us_peak
+SC12,0.100,broad_show_high

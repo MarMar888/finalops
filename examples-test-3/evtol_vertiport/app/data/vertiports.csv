@@ -1,0 +1,6 @@
+vertiport_id,district,pad_count,charger_count,parking_stands,grid_kw_limit,departure_noise_quota_day,departure_noise_quota_evening,medical_gateway
+V_DOWNTOWN,central_business,2,3,7,720,34,18,0
+V_AIRPORT,airport_connector,3,4,8,940,42,24,0
+V_HOSPITAL,medical_campus,2,3,7,680,28,14,1
+V_WEST,west_residential,2,2,6,560,24,10,0
+V_EAST,east_residential,2,2,6,520,23,9,0

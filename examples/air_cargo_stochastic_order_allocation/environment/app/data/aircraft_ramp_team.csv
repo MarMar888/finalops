@@ -1,0 +1,8 @@
+aircraft_id,ramp_team,uld_build_minutes_per_cbm,cold_chain_slots_per_order,hazmat_screening_minutes_per_order
+A01,RAMP_ASIA,6.7,1,42
+A02,RAMP_ASIA,5.8,1,34
+A03,RAMP_EU,5.8,1,34
+A04,RAMP_EU,6.7,1,42
+A05,RAMP_AMER,5.8,1,34
+A06,RAMP_AMER,6.7,1,42
+A07,RAMP_AMER,5.8,1,34

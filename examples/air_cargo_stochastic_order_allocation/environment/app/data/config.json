@@ -1,0 +1,6 @@
+{
+  "feasibility_tolerance": 1e-06,
+  "carbon_penalty_per_kg": 0.083,
+  "priority_tail_penalty": 28.5,
+  "objective_sense": "maximize"
+}

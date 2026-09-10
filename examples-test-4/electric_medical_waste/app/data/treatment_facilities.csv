@@ -1,0 +1,6 @@
+facility_id,node_id,open_cost,daily_capacity_kg,red_capacity_kg,yellow_capacity_kg,latest_receive_min,sterilization_permit
+F1,TF1,615.0,940.0,705.0,565.0,1260,advanced
+F2,TF2,588.0,890.0,575.0,670.0,1260,standard
+F3,TF3,632.0,970.0,730.0,525.0,1260,advanced
+F4,TF4,545.0,745.0,0.0,740.0,1260,yellow_only
+F5,TF5,676.0,820.0,620.0,505.0,1260,advanced

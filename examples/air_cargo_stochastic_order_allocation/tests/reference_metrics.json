@@ -1,0 +1,37 @@
+{
+  "best_bound": 8716.727566702284,
+  "best_bound_source": "best_bound",
+  "bound_sense": "upper",
+  "evaluation_summary": {
+    "error_count": 0,
+    "feasible": true,
+    "objective": 8716.543824000004,
+    "profit": 8716.543824000004
+  },
+  "generated_at": "2026-05-24T04:37:08.343353+00:00",
+  "mip_gap": 2.1079765786782103e-05,
+  "objective_sense": "maximize",
+  "quality_formula": "clip(1 + (O - R) / (B - R), 0, 2) if B exists and B - R >= max(abs(R), 1e-8) * mip_gap; otherwise let d=(O - R)/(max(abs(R), 1e-8)*mip_gap), quality=clip(2+d if d>=-1 else 1.5+0.5*d, 0, 2); if no R, quality = 2",
+  "reference_objective": 8716.543824000004,
+  "reference_objective_source": "profit",
+  "solution_path": "reference_solutions/air_cargo_stochastic_order_allocation_reference_solution.csv",
+  "solver_summary": {
+    "accepted_order_count": 34,
+    "best_bound": 8716.727566702284,
+    "evaluation": {
+      "error_count": 0,
+      "errors": [],
+      "feasible": true,
+      "objective": 8716.543824000004,
+      "objective_sense": "maximize",
+      "profit": 8716.543824000004
+    },
+    "evaluation_profit": 8716.543824000004,
+    "mip_gap": 2.1079765786782103e-05,
+    "objective": 8716.543824000004,
+    "solution": "reference_solutions/air_cargo_stochastic_order_allocation_reference_solution.csv",
+    "status": "gaplimit"
+  },
+  "task_name": "air_cargo_stochastic_order_allocation",
+  "time_limit_seconds": 600.0
+}

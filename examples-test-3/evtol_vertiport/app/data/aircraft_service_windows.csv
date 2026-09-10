@@ -1,0 +1,8 @@
+scenario_id,aircraft_id,vertiport_id,start_slot,end_slot,min_soc_kwh,window_type
+S_CLEAR,A05,V_HOSPITAL,12,15,40,medical_standby_check
+S_WIND_NORTH,A05,V_HOSPITAL,12,15,40,medical_standby_check
+S_STORM_CELLS,A05,V_HOSPITAL,12,15,40,medical_standby_check
+S_CLEAR,A12,V_AIRPORT,18,21,50,airport_recovery_standby
+S_WIND_NORTH,A12,V_AIRPORT,18,21,50,airport_recovery_standby
+S_STORM_CELLS,A12,V_AIRPORT,18,21,50,airport_recovery_standby
+S_STORM_CELLS,A03,V_AIRPORT,12,14,55,post_release_safety_check

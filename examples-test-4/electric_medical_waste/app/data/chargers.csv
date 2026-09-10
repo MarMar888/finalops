@@ -1,0 +1,7 @@
+charger_id,node_id,rate_kwh_per_min,queue_delay_min,daily_kwh_cap,session_limit,energy_price
+C1,CH1,1.42,8.5,340.0,8,0.42
+C2,CH2,1.35,7.8,325.0,8,0.40
+C3,CH3,1.18,10.6,315.0,7,0.37
+C4,CH4,1.24,9.7,318.0,7,0.39
+C5,CH5,1.56,11.2,305.0,7,0.46
+C6,CH6,1.31,8.9,310.0,7,0.38

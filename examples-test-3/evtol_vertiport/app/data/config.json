@@ -1,0 +1,19 @@
+{
+  "charge_efficiency": 0.92,
+  "delay_penalty_per_passenger_slot": 18.0,
+  "flight_energy_cost_multiplier": 1.0,
+  "high_soc_threshold_fraction": 0.78,
+  "maximum_declined_priority_requests": 24,
+  "minimum_accepted_passenger_fraction": 0.18,
+  "minimum_airport_accepted_passengers": 7,
+  "minimum_medical_accepted_fraction": 0.6,
+  "noise_violation_forbidden": true,
+  "planning_horizon_slots": 32,
+  "quantity_tolerance": 1e-05,
+  "reposition_cost_per_kwh": 2.4,
+  "reserve_soc_kwh": 18.0,
+  "slot_minutes": 15,
+  "tail_risk_alpha": 0.8,
+  "tail_risk_weight": 0.3,
+  "taper_charge_fraction": 0.55
+}

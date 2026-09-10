@@ -1,0 +1,8 @@
+customer_segment,min_expected_service_rate
+pharma,0.58
+express,0.52
+perishables,0.48
+ecommerce,0.00
+industrial,0.00
+automotive,0.00
+aerospace,0.00
