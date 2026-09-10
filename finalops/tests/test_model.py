@@ -35,6 +35,43 @@ def test_set_objective_requires_known_id():
         model.set_objective(3 * x, requirement_id="not_in_ledger")
 
 
+def test_add_variable_requires_known_id():
+    model = Model("m", _ledger())
+    with pytest.raises(UntaggedConstraintError):
+        model.add_variable(pulp.LpVariable("x", lowBound=0), requirement_id="not_in_ledger")
+
+
+def test_add_variable_marks_ledger_linked_and_records_units():
+    ledger = Ledger()
+    ledger.add(id="x_qty", description="x to produce per week", source="brief:1", kind="decision_variable")
+
+    model = Model("m", ledger)
+    model.add_variable(pulp.LpVariable("x", lowBound=0), requirement_id="x_qty", units="units/week")
+
+    req = ledger.get("x_qty")
+    assert req.linked is True
+    assert model.requirement_by_variable["x"] == "x_qty"
+    assert "units/week" in req.linked_constraints[0].expression
+
+
+def test_cite_data_requires_known_id():
+    model = Model("m", _ledger())
+    with pytest.raises(UntaggedConstraintError):
+        model.cite_data("not_in_ledger", note="3.0 $/unit")
+
+
+def test_cite_data_marks_ledger_linked():
+    ledger = Ledger()
+    ledger.add(id="unit_cost", description="cost per unit", source="brief:2", kind="data", units="$/unit")
+
+    model = Model("m", ledger)
+    model.cite_data("unit_cost", note="3.0 $/unit, from brief:2")
+
+    req = ledger.get("unit_cost")
+    assert req.linked is True
+    assert req.linked_constraints[0].expression == "3.0 $/unit, from brief:2"
+
+
 def test_solve_simple_lp():
     ledger = _ledger()
     model = Model("m", ledger)

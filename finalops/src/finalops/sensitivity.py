@@ -46,11 +46,12 @@ class SolveDiff:
 
 
 def _requirement_id_by_constraint_name(model) -> dict[str, str]:
-    """Constraints are stored on pulp.LpProblem keyed by their (possibly
-    mangled) name. Model.add_constraint sets constraint.name to the
-    requirement_id, so this is a straight lookup rather than a guess.
+    """Constraints are stored on pulp.LpProblem keyed by constraint name, which
+    Model.add_constraint sets to either a caller-given name or an
+    auto-generated one (not necessarily the requirement_id). The authoritative
+    constraint-name -> requirement_id mapping lives on the model itself.
     """
-    return {name: con.name for name, con in model.problem.constraints.items() if con.name}
+    return dict(model.requirement_by_constraint)
 
 
 def _is_mip(model) -> bool:
@@ -74,7 +75,7 @@ def binding_report(model) -> SensitivityReport:
 
     requirements = []
     for name, constraint in model.problem.constraints.items():
-        req_id = constraint.name or name
+        req_id = model.requirement_by_constraint.get(name, name)
         slack = _slack(constraint)
         binding = abs(slack) <= _BINDING_TOL
 
@@ -107,6 +108,19 @@ def _relaxed_clone(model):
     return clone
 
 
+def _constraint_name_for_requirement(model, requirement_id: str) -> str:
+    """Reverse-lookup: which constraint key on the model was tagged with this
+    requirement_id. Falls back to treating requirement_id as the constraint
+    key directly, for callers that happened to name their constraint that.
+    """
+    for name, req_id in model.requirement_by_constraint.items():
+        if req_id == requirement_id:
+            return name
+    if requirement_id in model.problem.constraints:
+        return requirement_id
+    raise KeyError(f"no constraint found for requirement '{requirement_id}'")
+
+
 def _clone_with_constraint(model, requirement_id: str, *, drop: bool = False, rhs_delta: float = 0.0):
     """A deepcopy of model with one constraint (identified by requirement_id)
     either dropped or RHS-shifted by rhs_delta. Used for what-if re-solves —
@@ -115,14 +129,7 @@ def _clone_with_constraint(model, requirement_id: str, *, drop: bool = False, rh
     clone = copy.copy(model)
     clone.problem = copy.deepcopy(model.problem)
 
-    target_name = None
-    for name, constraint in clone.problem.constraints.items():
-        if constraint.name == requirement_id or name == requirement_id:
-            target_name = name
-            break
-
-    if target_name is None:
-        raise KeyError(f"no constraint found for requirement '{requirement_id}'")
+    target_name = _constraint_name_for_requirement(model, requirement_id)
 
     if drop:
         del clone.problem.constraints[target_name]
