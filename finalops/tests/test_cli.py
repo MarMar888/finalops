@@ -28,6 +28,24 @@ def test_ledger_init_and_add_and_list(tmp_path, capsys):
     assert "UNLINKED" in out
 
 
+def test_ledger_commands_default_path_to_ledger_json(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+
+    main(["ledger", "init"])
+    assert (tmp_path / "ledger.json").exists()
+
+    main(["ledger", "add", "--id", "demand", "--description", "meet demand", "--source", "brief.md:3"])
+    capsys.readouterr()
+
+    main(["ledger", "list"])
+    out = capsys.readouterr().out
+    assert "demand" in out
+
+    main(["ledger", "graph"])
+    dot = capsys.readouterr().out
+    assert '"demand"' in dot
+
+
 def test_ledger_init_refuses_overwrite_without_force(tmp_path):
     path = tmp_path / "ledger.json"
     main(["ledger", "init", str(path)])

@@ -70,12 +70,12 @@ def main(argv: list[str] | None = None) -> None:
     ledger_sub = ledger_parser.add_subparsers(dest="ledger_command", required=True)
 
     p_init = ledger_sub.add_parser("init", help="create an empty ledger file")
-    p_init.add_argument("path")
+    p_init.add_argument("path", nargs="?", default="ledger.json", help="default: ledger.json")
     p_init.add_argument("--force", action="store_true")
     p_init.set_defaults(func=_cmd_ledger_init)
 
     p_add = ledger_sub.add_parser("add", help="register a requirement extracted from the brief")
-    p_add.add_argument("path")
+    p_add.add_argument("path", nargs="?", default="ledger.json", help="default: ledger.json")
     p_add.add_argument("--id", required=True)
     p_add.add_argument("--description", required=True)
     p_add.add_argument("--source", required=True, help="where this rule came from, e.g. 'instructions.md:12'")
@@ -84,14 +84,14 @@ def main(argv: list[str] | None = None) -> None:
     p_add.set_defaults(func=_cmd_ledger_add)
 
     p_list = ledger_sub.add_parser("list", help="show requirements and their link status")
-    p_list.add_argument("path")
+    p_list.add_argument("path", nargs="?", default="ledger.json", help="default: ledger.json")
     p_list.set_defaults(func=_cmd_ledger_list)
 
     p_graph = ledger_sub.add_parser(
         "graph",
         help="render the ledger as a Graphviz DOT graph (decision variables -> objective/constraints that reference them)",
     )
-    p_graph.add_argument("path")
+    p_graph.add_argument("path", nargs="?", default="ledger.json", help="default: ledger.json")
     p_graph.add_argument("--out", default=None, help="write DOT to this file instead of stdout")
     p_graph.set_defaults(func=_cmd_ledger_graph)
 
