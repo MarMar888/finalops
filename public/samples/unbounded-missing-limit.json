@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "model": "unbounded_missing_limit",
+  "summary": {
+    "status": "Unbounded",
+    "termination": "Linear relaxation unbounded",
+    "sense": "max",
+    "objective": null,
+    "bound": null,
+    "proven_optimal": false,
+    "quality_gap": null,
+    "feasible": false,
+    "problems": [
+      "unbounded: the objective can improve without limit -- a limiting constraint or variable bound is missing",
+      "1 ledger requirement(s) never linked to a constraint: supply_limit"
+    ],
+    "unlinked_requirements": [
+      "supply_limit"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "units_qty",
+      "kind": "decision_variable",
+      "description": "units to sell per week",
+      "source": "brief:1",
+      "units": "units/week",
+      "linked": [
+        {
+          "name": "units",
+          "expression": "Continuous variable, bounds=[0, +inf], units=units/week"
+        }
+      ]
+    },
+    {
+      "id": "profit",
+      "kind": "objective",
+      "description": "maximize weekly profit",
+      "source": "brief:2",
+      "units": null,
+      "linked": [
+        {
+          "name": "objective",
+          "expression": "4*units"
+        }
+      ]
+    },
+    {
+      "id": "min_order",
+      "kind": "constraint",
+      "description": "must sell at least 10 units to keep the account",
+      "source": "brief:3",
+      "units": null,
+      "linked": [
+        {
+          "name": "c1",
+          "expression": "units >= 10"
+        }
+      ]
+    },
+    {
+      "id": "supply_limit",
+      "kind": "constraint",
+      "description": "supplier can deliver at most 500 units/week",
+      "source": "brief:4",
+      "units": null,
+      "linked": []
+    }
+  ],
+  "variables": [
+    {
+      "name": "units",
+      "value": null,
+      "lower": 0,
+      "upper": null,
+      "category": "Continuous",
+      "requirement_id": "units_qty",
+      "units": "units/week"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "c1",
+      "requirement_id": "min_order",
+      "expression": "units >= 10",
+      "sense": ">=",
+      "rhs": 10,
+      "terms": {
+        "units": 1
+      },
+      "slack": null,
+      "binding": null,
+      "shadow_price": null,
+      "shadow_basis": null,
+      "violation": null,
+      "in_conflict": null,
+      "what_if_dropped": {
+        "status": "Unbounded",
+        "objective": null
+      }
+    }
+  ],
+  "objective": {
+    "requirement_id": "profit",
+    "expression": "4*units",
+    "terms": {
+      "units": 4
+    }
+  },
+  "infeasibility": null
+}

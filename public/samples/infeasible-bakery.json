@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "model": "infeasible_bakery",
+  "summary": {
+    "status": "Infeasible",
+    "termination": "Linear relaxation infeasible",
+    "sense": "max",
+    "objective": null,
+    "bound": null,
+    "proven_optimal": false,
+    "quality_gap": null,
+    "feasible": false,
+    "problems": [
+      "infeasible: these cannot all hold together: 'contract_bread' (contract requires at least 60 loaves/day), 'contract_cakes' (contract requires at least 30 cakes/day), 'oven_hours' (oven runs at most 100 hours/day (bread 1h, cake 2h)). Loosen or drop any one of them and the rest can be satisfied",
+      "infeasible: requirement 'contract_cakes' violated by 10"
+    ],
+    "unlinked_requirements": []
+  },
+  "requirements": [
+    {
+      "id": "bread_qty",
+      "kind": "decision_variable",
+      "description": "loaves of bread baked per day",
+      "source": "brief:1",
+      "units": "loaves/day",
+      "linked": [
+        {
+          "name": "bread",
+          "expression": "Continuous variable, bounds=[0, +inf], units=loaves/day"
+        }
+      ]
+    },
+    {
+      "id": "cake_qty",
+      "kind": "decision_variable",
+      "description": "cakes baked per day",
+      "source": "brief:1",
+      "units": "cakes/day",
+      "linked": [
+        {
+          "name": "cakes",
+          "expression": "Continuous variable, bounds=[0, +inf], units=cakes/day"
+        }
+      ]
+    },
+    {
+      "id": "profit",
+      "kind": "objective",
+      "description": "maximize daily profit",
+      "source": "brief:2",
+      "units": null,
+      "linked": [
+        {
+          "name": "objective",
+          "expression": "2*bread + 5*cakes"
+        }
+      ]
+    },
+    {
+      "id": "contract_bread",
+      "kind": "constraint",
+      "description": "contract requires at least 60 loaves/day",
+      "source": "brief:3",
+      "units": null,
+      "linked": [
+        {
+          "name": "c1",
+          "expression": "bread >= 60"
+        }
+      ]
+    },
+    {
+      "id": "contract_cakes",
+      "kind": "constraint",
+      "description": "contract requires at least 30 cakes/day",
+      "source": "brief:3",
+      "units": null,
+      "linked": [
+        {
+          "name": "c2",
+          "expression": "cakes >= 30"
+        }
+      ]
+    },
+    {
+      "id": "oven_hours",
+      "kind": "constraint",
+      "description": "oven runs at most 100 hours/day (bread 1h, cake 2h)",
+      "source": "brief:4",
+      "units": null,
+      "linked": [
+        {
+          "name": "c3",
+          "expression": "bread + 2*cakes <= 100"
+        }
+      ]
+    },
+    {
+      "id": "labor_hours",
+      "kind": "constraint",
+      "description": "at most 200 labor hours/day (bread 1.5h, cake 1h)",
+      "source": "brief:5",
+      "units": null,
+      "linked": [
+        {
+          "name": "c4",
+          "expression": "1.5*bread + cakes <= 200.0"
+        }
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "bread",
+      "value": null,
+      "lower": 0,
+      "upper": null,
+      "category": "Continuous",
+      "requirement_id": "bread_qty",
+      "units": "loaves/day"
+    },
+    {
+      "name": "cakes",
+      "value": null,
+      "lower": 0,
+      "upper": null,
+      "category": "Continuous",
+      "requirement_id": "cake_qty",
+      "units": "cakes/day"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "c1",
+      "requirement_id": "contract_bread",
+      "expression": "bread >= 60",
+      "sense": ">=",
+      "rhs": 60,
+      "terms": {
+        "bread": 1
+      },
+      "slack": null,
+      "binding": null,
+      "shadow_price": null,
+      "shadow_basis": null,
+      "violation": null,
+      "in_conflict": true,
+      "what_if_dropped": {
+        "status": "Optimal",
+        "objective": 250.0
+      }
+    },
+    {
+      "name": "c2",
+      "requirement_id": "contract_cakes",
+      "expression": "cakes >= 30",
+      "sense": ">=",
+      "rhs": 30,
+      "terms": {
+        "cakes": 1
+      },
+      "slack": null,
+      "binding": null,
+      "shadow_price": null,
+      "shadow_basis": null,
+      "violation": 10.0,
+      "in_conflict": true,
+      "what_if_dropped": {
+        "status": "Optimal",
+        "objective": 220.0
+      }
+    },
+    {
+      "name": "c3",
+      "requirement_id": "oven_hours",
+      "expression": "bread + 2*cakes <= 100",
+      "sense": "<=",
+      "rhs": 100,
+      "terms": {
+        "bread": 1,
+        "cakes": 2
+      },
+      "slack": null,
+      "binding": null,
+      "shadow_price": null,
+      "shadow_basis": null,
+      "violation": null,
+      "in_conflict": true,
+      "what_if_dropped": {
+        "status": "Optimal",
+        "objective": 670.0
+      }
+    },
+    {
+      "name": "c4",
+      "requirement_id": "labor_hours",
+      "expression": "1.5*bread + cakes <= 200.0",
+      "sense": "<=",
+      "rhs": 200.0,
+      "terms": {
+        "bread": 1.5,
+        "cakes": 1
+      },
+      "slack": null,
+      "binding": null,
+      "shadow_price": null,
+      "shadow_basis": null,
+      "violation": null,
+      "in_conflict": false,
+      "what_if_dropped": {
+        "status": "Infeasible",
+        "objective": null
+      }
+    }
+  ],
+  "objective": {
+    "requirement_id": "profit",
+    "expression": "2*bread + 5*cakes",
+    "terms": {
+      "bread": 2,
+      "cakes": 5
+    }
+  },
+  "infeasibility": {
+    "violations": [
+      {
+        "constraint_name": "c2",
+        "requirement_id": "contract_cakes",
+        "description": "contract requires at least 30 cakes/day",
+        "magnitude": 10.0
+      }
+    ],
+    "conflict": {
+      "members": [
+        {
+          "kind": "constraint",
+          "name": "c1",
+          "expression": "bread >= 60",
+          "requirement_id": "contract_bread",
+          "description": "contract requires at least 60 loaves/day",
+          "bound": null
+        },
+        {
+          "kind": "constraint",
+          "name": "c2",
+          "expression": "cakes >= 30",
+          "requirement_id": "contract_cakes",
+          "description": "contract requires at least 30 cakes/day",
+          "bound": null
+        },
+        {
+          "kind": "constraint",
+          "name": "c3",
+          "expression": "bread + 2*cakes <= 100",
+          "requirement_id": "oven_hours",
+          "description": "oven runs at most 100 hours/day (bread 1h, cake 2h)",
+          "bound": null
+        }
+      ],
+      "minimal": true,
+      "solves": 9,
+      "requirement_ids": [
+        "contract_bread",
+        "contract_cakes",
+        "oven_hours"
+      ]
+    }
+  }
+}

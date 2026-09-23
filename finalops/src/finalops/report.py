@@ -27,10 +27,14 @@ def build_report(
     *why*, tied back to ledger requirements, instead of just `feasible: false`.
     """
     unlinked = [r.id for r in model.ledger.unlinked()]
+    # Only an optimal solve has values worth testing; infeasible/unbounded ones are arbitrary.
+    rule_violations = model.check_rules(result.variables) if result.status == "Optimal" else []
 
+    conflict = None
     if infeasibility is not None:
         feasible = infeasibility.feasible
         violations = [asdict(v) for v in infeasibility.violations]
+        conflict = asdict(infeasibility.conflict) if infeasibility.conflict else None
         gap = None
     else:
         feasibility_report = check_feasibility(model)
@@ -46,9 +50,11 @@ def build_report(
         "bound": bound,
         "feasible": feasible,
         "violations": violations,
+        "conflict": conflict,
         "quality_gap": gap,
         "requirement_count": len(model.ledger),
         "unlinked_requirements": unlinked,
+        "rule_violations": [asdict(v) for v in rule_violations],
     }
 
     if out:
@@ -57,20 +63,42 @@ def build_report(
     return report
 
 
+def _conflict_label(member: dict) -> str:
+    label = member.get("requirement_id") or member["name"]
+    detail = member.get("description") or member["expression"]
+    return f"'{label}' ({detail})"
+
+
 def diagnose(report: dict, max_gap: float = 0.05) -> list[str]:
     """Turn a report dict into a list of human-readable problems. Empty means pass.
     Shared by `finalops.run()` and `finalops check` so the two never drift apart.
     """
     problems = []
 
-    if not report.get("feasible", False):
+    if report.get("status") == "Unbounded":
+        # The solver's values for an unbounded LP are arbitrary, so the feasibility
+        # recheck below would report a bogus "infeasible" -- and the fix is the opposite
+        # (add a missing limit, not relax a rule).
+        problems.append("unbounded: the objective can improve without limit -- a limiting constraint or variable bound is missing")
+    elif not report.get("feasible", False):
         violations = report.get("violations", [])
+        conflict = report.get("conflict")
+        if conflict:
+            names = ", ".join(_conflict_label(m) for m in conflict["members"])
+            hedge = "" if conflict["minimal"] else " (not proven minimal: the search hit its solve limit)"
+            problems.append(
+                f"infeasible: these cannot all hold together: {names}{hedge}. "
+                "Loosen or drop any one of them and the rest can be satisfied"
+            )
         if violations and "requirement_id" in violations[0]:
             for v in violations:
                 label = v.get("requirement_id") or v.get("constraint_name")
                 problems.append(f"infeasible: requirement '{label}' violated by {v['magnitude']:.4g}")
         else:
             problems.append(f"infeasible: {len(violations)} constraint(s) violated")
+
+    for v in report.get("rule_violations", []):
+        problems.append(f"rule '{v['rule_id']}' violated: {v['message']}")
 
     unlinked = report.get("unlinked_requirements", [])
     if unlinked:

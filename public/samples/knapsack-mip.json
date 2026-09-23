@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "model": "knapsack_mip",
+  "summary": {
+    "status": "Optimal",
+    "termination": "Optimal solution found",
+    "sense": "max",
+    "objective": 28.0,
+    "bound": 28.0,
+    "proven_optimal": true,
+    "quality_gap": 0.0,
+    "feasible": true,
+    "problems": [
+      "1 ledger requirement(s) never linked to a constraint: keep_perishable"
+    ],
+    "unlinked_requirements": [
+      "keep_perishable"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "pick",
+      "kind": "decision_variable",
+      "description": "which items to load (0/1 each)",
+      "source": "brief:1",
+      "units": "0/1",
+      "linked": [
+        {
+          "name": "tent",
+          "expression": "Integer variable, bounds=[0, 1], units=0/1"
+        },
+        {
+          "name": "stove",
+          "expression": "Integer variable, bounds=[0, 1], units=0/1"
+        },
+        {
+          "name": "water",
+          "expression": "Integer variable, bounds=[0, 1], units=0/1"
+        },
+        {
+          "name": "rope",
+          "expression": "Integer variable, bounds=[0, 1], units=0/1"
+        },
+        {
+          "name": "camera",
+          "expression": "Integer variable, bounds=[0, 1], units=0/1"
+        },
+        {
+          "name": "books",
+          "expression": "Integer variable, bounds=[0, 1], units=0/1"
+        }
+      ]
+    },
+    {
+      "id": "value",
+      "kind": "objective",
+      "description": "maximize total value loaded",
+      "source": "brief:2",
+      "units": null,
+      "linked": [
+        {
+          "name": "objective",
+          "expression": "5*books + 7*camera + 4*rope + 9*stove + 12*tent + 8*water"
+        }
+      ]
+    },
+    {
+      "id": "weight_cap",
+      "kind": "constraint",
+      "description": "total weight at most 15 kg",
+      "source": "brief:3",
+      "units": null,
+      "linked": [
+        {
+          "name": "c1",
+          "expression": "3*books + camera + 2*rope + 4*stove + 6*tent + 5*water <= 15.0"
+        }
+      ]
+    },
+    {
+      "id": "volume_cap",
+      "kind": "constraint",
+      "description": "total volume at most 10 L",
+      "source": "brief:3",
+      "units": null,
+      "linked": [
+        {
+          "name": "c2",
+          "expression": "4*books + 2*camera + rope + 3*stove + 5*tent + 6*water <= 10.0"
+        }
+      ]
+    },
+    {
+      "id": "keep_perishable",
+      "kind": "constraint",
+      "description": "at least one perishable item must be loaded",
+      "source": "brief:4",
+      "units": null,
+      "linked": []
+    }
+  ],
+  "variables": [
+    {
+      "name": "books",
+      "value": 0.0,
+      "lower": 0,
+      "upper": 1,
+      "category": "Binary",
+      "requirement_id": "pick",
+      "units": "0/1"
+    },
+    {
+      "name": "camera",
+      "value": 1.0,
+      "lower": 0,
+      "upper": 1,
+      "category": "Binary",
+      "requirement_id": "pick",
+      "units": "0/1"
+    },
+    {
+      "name": "rope",
+      "value": 0.0,
+      "lower": 0,
+      "upper": 1,
+      "category": "Binary",
+      "requirement_id": "pick",
+      "units": "0/1"
+    },
+    {
+      "name": "stove",
+      "value": 1.0,
+      "lower": 0,
+      "upper": 1,
+      "category": "Binary",
+      "requirement_id": "pick",
+      "units": "0/1"
+    },
+    {
+      "name": "tent",
+      "value": 1.0,
+      "lower": 0,
+      "upper": 1,
+      "category": "Binary",
+      "requirement_id": "pick",
+      "units": "0/1"
+    },
+    {
+      "name": "water",
+      "value": 0.0,
+      "lower": 0,
+      "upper": 1,
+      "category": "Binary",
+      "requirement_id": "pick",
+      "units": "0/1"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "c1",
+      "requirement_id": "weight_cap",
+      "expression": "3*books + camera + 2*rope + 4*stove + 6*tent + 5*water <= 15.0",
+      "sense": "<=",
+      "rhs": 15.0,
+      "terms": {
+        "tent": 6,
+        "stove": 4,
+        "water": 5,
+        "rope": 2,
+        "camera": 1,
+        "books": 3
+      },
+      "slack": 4.0,
+      "binding": false,
+      "shadow_price": 0.0,
+      "shadow_basis": "lp_relaxation",
+      "violation": null,
+      "in_conflict": null,
+      "what_if_dropped": {
+        "status": "Optimal",
+        "objective": 28.0
+      }
+    },
+    {
+      "name": "c2",
+      "requirement_id": "volume_cap",
+      "expression": "4*books + 2*camera + rope + 3*stove + 5*tent + 6*water <= 10.0",
+      "sense": "<=",
+      "rhs": 10.0,
+      "terms": {
+        "tent": 5,
+        "stove": 3,
+        "water": 6,
+        "rope": 1,
+        "camera": 2,
+        "books": 4
+      },
+      "slack": 0.0,
+      "binding": true,
+      "shadow_price": 2.4,
+      "shadow_basis": "lp_relaxation",
+      "violation": null,
+      "in_conflict": null,
+      "what_if_dropped": {
+        "status": "Optimal",
+        "objective": 33.0
+      }
+    }
+  ],
+  "objective": {
+    "requirement_id": "value",
+    "expression": "5*books + 7*camera + 4*rope + 9*stove + 12*tent + 8*water",
+    "terms": {
+      "tent": 12,
+      "stove": 9,
+      "water": 8,
+      "rope": 4,
+      "camera": 7,
+      "books": 5
+    }
+  },
+  "infeasibility": null
+}

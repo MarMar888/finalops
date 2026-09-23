@@ -5,6 +5,8 @@ from pathlib import Path
 
 from .cbc_diagnostics import solve_with_diagnostics
 from .infeasibility import explain_infeasibility
+from .ledger import Ledger
+from .model import Model
 from .report import build_report, diagnose
 
 _SOLVERS = {"cbc"}
@@ -15,6 +17,7 @@ class RunResult:
     passed: bool
     report: dict
     problems: list[str]
+    model: Model | None = None
 
 
 def run(
@@ -24,6 +27,7 @@ def run(
     time_limit: float | None = None,
     max_gap: float = 0.05,
     out: str | Path | None = "report.json",
+    name: str = "model",
 ) -> RunResult:
     """The one call an agent should make once its model is built and every
     constraint/objective is tagged against the ledger: solve it, and get back
@@ -37,12 +41,15 @@ def run(
     - The quality gap is computed against the solver's own internally-tracked
       bound (recovered from the CBC log), not a looser LP-relaxation guess.
 
-    `model` is a `finalops.Model` (the ledger-aware wrapper), not a raw
-    `pulp.LpProblem` — ledger coverage can't be checked without it. Reach
-    into `model.problem` if you need the underlying PuLP object directly.
+    Pass a `Ledger` and the model is built from it (see `Model.from_ledger`); the built
+    model comes back as `RunResult.model`. Or pass a `finalops.Model` you assembled
+    yourself -- not a raw `pulp.LpProblem`, since ledger coverage can't be checked
+    without the wrapper. Reach into `model.problem` for the underlying PuLP object.
     """
     if solver not in _SOLVERS:
         raise ValueError(f"unknown solver '{solver}', available: {sorted(_SOLVERS)}")
+    if isinstance(model, Ledger):
+        model = Model.from_ledger(model, name=name)
 
     result, diagnostics = solve_with_diagnostics(model, time_limit=time_limit)
 
@@ -58,4 +65,4 @@ def run(
     )
     problems = diagnose(report, max_gap=max_gap)
 
-    return RunResult(passed=not problems, report=report, problems=problems)
+    return RunResult(passed=not problems, report=report, problems=problems, model=model)

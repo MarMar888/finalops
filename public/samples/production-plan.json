@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "model": "production_plan",
+  "summary": {
+    "status": "Optimal",
+    "termination": null,
+    "sense": "min",
+    "objective": 300.0,
+    "bound": 300.0,
+    "proven_optimal": true,
+    "quality_gap": 0.0,
+    "feasible": true,
+    "problems": [],
+    "unlinked_requirements": []
+  },
+  "requirements": [
+    {
+      "id": "widgets",
+      "kind": "decision_variable",
+      "description": "widgets",
+      "source": "brief:1",
+      "units": "units/week",
+      "linked": [
+        {
+          "name": "widgets",
+          "expression": "Continuous variable, bounds=[0, +inf], units=units/week"
+        }
+      ]
+    },
+    {
+      "id": "gadgets",
+      "kind": "decision_variable",
+      "description": "gadgets",
+      "source": "brief:1",
+      "units": "units/week",
+      "linked": [
+        {
+          "name": "gadgets",
+          "expression": "Continuous variable, bounds=[0, +inf], units=units/week"
+        }
+      ]
+    },
+    {
+      "id": "widget_cost",
+      "kind": "data",
+      "description": "widget_cost",
+      "source": "brief:2",
+      "units": "$/unit",
+      "linked": [
+        {
+          "name": "data",
+          "expression": "3 $/unit (used by cost)"
+        }
+      ]
+    },
+    {
+      "id": "gadget_cost",
+      "kind": "data",
+      "description": "gadget_cost",
+      "source": "brief:2",
+      "units": "$/unit",
+      "linked": [
+        {
+          "name": "data",
+          "expression": "5 $/unit (used by cost)"
+        }
+      ]
+    },
+    {
+      "id": "cost",
+      "kind": "objective",
+      "description": "minimize total weekly production cost",
+      "source": "brief:2",
+      "units": null,
+      "linked": [
+        {
+          "name": "objective",
+          "expression": "5*gadgets + 3*widgets"
+        }
+      ]
+    },
+    {
+      "id": "demand",
+      "kind": "constraint",
+      "description": "produce at least 100 units per week",
+      "source": "brief:3",
+      "units": null,
+      "linked": [
+        {
+          "name": "demand",
+          "expression": "gadgets + widgets >= 100.0"
+        }
+      ]
+    },
+    {
+      "id": "capacity",
+      "kind": "constraint",
+      "description": "respect the 240 capacity-unit weekly limit",
+      "source": "brief:4",
+      "units": null,
+      "linked": [
+        {
+          "name": "capacity",
+          "expression": "2*gadgets + widgets <= 240.0"
+        }
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "gadgets",
+      "value": 0.0,
+      "lower": 0,
+      "upper": null,
+      "category": "Continuous",
+      "requirement_id": "gadgets",
+      "units": "units/week"
+    },
+    {
+      "name": "widgets",
+      "value": 100.0,
+      "lower": 0,
+      "upper": null,
+      "category": "Continuous",
+      "requirement_id": "widgets",
+      "units": "units/week"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "demand",
+      "requirement_id": "demand",
+      "expression": "gadgets + widgets >= 100.0",
+      "sense": ">=",
+      "rhs": 100.0,
+      "terms": {
+        "widgets": 1,
+        "gadgets": 1
+      },
+      "slack": 0.0,
+      "binding": true,
+      "shadow_price": 3.0,
+      "shadow_basis": "exact",
+      "violation": null,
+      "in_conflict": null,
+      "what_if_dropped": {
+        "status": "Optimal",
+        "objective": 0.0
+      }
+    },
+    {
+      "name": "capacity",
+      "requirement_id": "capacity",
+      "expression": "2*gadgets + widgets <= 240.0",
+      "sense": "<=",
+      "rhs": 240.0,
+      "terms": {
+        "widgets": 1,
+        "gadgets": 2
+      },
+      "slack": 140.0,
+      "binding": false,
+      "shadow_price": 0.0,
+      "shadow_basis": "exact",
+      "violation": null,
+      "in_conflict": null,
+      "what_if_dropped": {
+        "status": "Optimal",
+        "objective": 300.0
+      }
+    }
+  ],
+  "objective": {
+    "requirement_id": "cost",
+    "expression": "5*gadgets + 3*widgets",
+    "terms": {
+      "widgets": 3,
+      "gadgets": 5
+    }
+  },
+  "infeasibility": null
+}
