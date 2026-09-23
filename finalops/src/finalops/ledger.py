@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass, field
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+
+from .specs import Constraint, DataValue, DecisionVariable, LinearObjective, Quantity, Spec
 
 
 class RequirementKind(str, Enum):
@@ -39,6 +42,7 @@ class Requirement:
     kind: RequirementKind = RequirementKind.CONSTRAINT
     units: str | None = None
     linked_constraints: list[LinkedConstraint] = field(default_factory=list)
+    spec: Spec | None = None
 
     @property
     def linked(self) -> bool:
@@ -100,13 +104,86 @@ class Ledger:
     def unlinked(self) -> list[Requirement]:
         return [r for r in self._by_id.values() if not r.linked]
 
+    def reset_links(self) -> None:
+        """Forget every recorded link, so a model can be built from the ledger afresh."""
+        for req in self._by_id.values():
+            req.linked_constraints.clear()
+
+    def _attach(self, spec: Spec) -> Requirement:
+        """Put a spec in the ledger: as a new requirement, or onto one already
+        registered from the brief (so 'write the checklist first' still works).
+        """
+        kind = RequirementKind(spec.KIND)
+        existing = self._by_id.get(spec.id)
+        if existing is None:
+            req = self.add(id=spec.id, description=spec.description or spec.id, source=spec.source, kind=kind, units=spec.units)
+        else:
+            if existing.kind != kind:
+                raise ValueError(f"requirement '{spec.id}' is registered as {existing.kind.value}, but this is a {kind.value}")
+            if existing.spec is not None:
+                raise DuplicateRequirementError(f"requirement '{spec.id}' already has a definition")
+            req = existing
+        req.spec = spec
+        return req
+
+    def variable(
+        self,
+        id: str,
+        *,
+        source: str,
+        description: str = "",
+        units: str | None = None,
+        lower: float | None = 0,
+        upper: float | None = None,
+        category: str = "Continuous",
+    ) -> Requirement:
+        """A decision variable: something the model gets to choose."""
+        return self._attach(
+            DecisionVariable(id=id, source=source, description=description, units=units, lower=lower, upper=upper, category=category)  # type: ignore[arg-type]
+        )
+
+    def data(self, id: str, value: float, *, source: str, units: str | None = None, description: str = "") -> Requirement:
+        """A hard number. Rules refer to it by id, so the number carries its units and
+        source with it and shows up as unlinked if nothing ever uses it.
+        """
+        return self._attach(DataValue(id=id, value=value, source=source, units=units, description=description))
+
+    def minimize(
+        self, id: str, coefficients: Mapping[str, Quantity], *, source: str, description: str = "", units: str | None = None
+    ) -> Requirement:
+        """The objective, as a cost per variable. A coefficient is a number or a data id."""
+        return self._attach(
+            LinearObjective(id=id, sense="min", coefficients=dict(coefficients), source=source, description=description, units=units)
+        )
+
+    def maximize(
+        self, id: str, coefficients: Mapping[str, Quantity], *, source: str, description: str = "", units: str | None = None
+    ) -> Requirement:
+        return self._attach(
+            LinearObjective(id=id, sense="max", coefficients=dict(coefficients), source=source, description=description, units=units)
+        )
+
+    def constrain(self, rule: Constraint) -> Requirement:
+        """A rule from the brief, as a Constraint object (CapacityLimit, DemandCoverage, ...)."""
+        if not isinstance(rule, Constraint):
+            raise TypeError(f"expected a Constraint (e.g. CapacityLimit), got {type(rule).__name__}")
+        return self._attach(rule)
+
     def to_json(self, path: str | Path) -> None:
         data = []
         for r in self._by_id.values():
-            payload = asdict(r)
-            payload["kind"] = r.kind.value
-            payload["linked"] = r.linked
-            data.append(payload)
+            data.append(
+                {
+                    "id": r.id,
+                    "description": r.description,
+                    "source": r.source,
+                    "kind": r.kind.value,
+                    "units": r.units,
+                    "linked_constraints": [{"name": lc.name, "expression": lc.expression} for lc in r.linked_constraints],
+                    "linked": r.linked,
+                    "spec": r.spec.to_dict() if r.spec is not None else None,
+                }
+            )
         Path(path).write_text(json.dumps(data, indent=2) + "\n")
 
     @classmethod
@@ -124,6 +201,7 @@ class Ledger:
                     LinkedConstraint(name=lc["name"], expression=lc["expression"])
                     for lc in d.get("linked_constraints", [])
                 ],
+                spec=Spec.from_dict(d["spec"]) if d.get("spec") else None,
             )
             for d in data
         ]
