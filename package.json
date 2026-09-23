@@ -2,6 +2,15 @@
   "name": "finalops",
   "version": "0.1.0",
   "private": true,
+  "description": "LP debugger for finalops: visualizes a solved model's variables, constraints, shadow prices, and infeasibility conflicts.",
+  "license": "MIT",
+  "author": "Marley Barrett",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MarMar888/finalops.git"
+  },
+  "homepage": "https://github.com/MarMar888/finalops#readme",
+  "bugs": "https://github.com/MarMar888/finalops/issues",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

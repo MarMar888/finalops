@@ -3,15 +3,35 @@ name = "finalops"
 version = "0.1.0"
 description = "AI-native scaffolding for operations-research agents: a requirement ledger, constraint traceability, and a one-call solve/validate/gate loop on top of PuLP."
 readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Marley Barrett" },
+]
 requires-python = ">=3.10"
+keywords = ["operations-research", "linear-programming", "pulp", "optimization", "agents", "llm"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
     "pulp>=2.8",
+    "pydantic>=2.5",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/MarMar888/finalops"
+Repository = "https://github.com/MarMar888/finalops"
+Issues = "https://github.com/MarMar888/finalops/issues"
 
 [project.scripts]
 finalops = "finalops.cli:main"
